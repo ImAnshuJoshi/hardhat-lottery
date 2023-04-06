@@ -110,6 +110,9 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
+        s_players = new address payable[](0);
+        s_raffleState = RaffleState.OPEN;
+        s_lastTimeStamp = block.timestamp;
         (bool success , ) = recentWinner.call{value : address(this).balance}("");
 
         if(!success){
@@ -128,5 +131,22 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     
     function getPlayer(uint256 index) public view returns(address){
         return s_players[index];
+    }
+
+    function getRaffleState() public view returns(RaffleState){
+        return s_raffleState;
+    }
+    function getInterval() public view returns (uint256){
+        return i_interval;
+    }
+    function getRaffleEntranceFee() public view returns (uint256){
+        return i_entranceFee;
+    }
+    function getLastTimeStamp() public view returns (uint256){
+        return s_lastTimeStamp;
+    }
+
+    function getNumPlayers() public view returns (uint256){
+        return s_players.length;
     }
 }
